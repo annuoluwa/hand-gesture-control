@@ -2,6 +2,7 @@ import os
 import cv2
 import mediapipe as mp
 import numpy as np
+import datetime;
 import time
 from hand_overlay import (
     draw_skeleton,
@@ -43,7 +44,7 @@ def run():
     cap = cv2.VideoCapture(0)
     prev = time.time()
     fps = 0.0
-    screenshot_count = 1
+    
     with mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.6, min_tracking_confidence=0.6) as hands:
         try:
             while True:
@@ -119,10 +120,11 @@ def run():
                     break
                 elif key == ord('s'):
                     # screenshot
-                    filename = f"screenshot_{screenshot_count:03d}.png"
+                    now = datetime.datetime.now()
+                    filename = f"screenshot_{now.strftime('%Y%m%d_%H%M%S')}.png"
                     cv2.imwrite(filename, overlay)
                     print(f"Saved screenshot: {filename}")
-                    screenshot_count += 1
+                    
         except KeyboardInterrupt:
             # graceful exit
             pass
