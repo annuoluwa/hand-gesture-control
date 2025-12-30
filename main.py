@@ -2,6 +2,7 @@ import os
 import cv2
 import mediapipe as mp
 import numpy as np
+import datetime;
 import time
 from hand_overlay import (
     draw_skeleton,
@@ -38,10 +39,12 @@ def compute_palm_rotation(landmarks):
     return angle
 
 
+
 def run():
     cap = cv2.VideoCapture(0)
     prev = time.time()
     fps = 0.0
+    
     with mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.6, min_tracking_confidence=0.6) as hands:
         try:
             while True:
@@ -115,12 +118,21 @@ def run():
                 key = cv2.waitKey(1) & 0xFF
                 if key == 27:
                     break
+                elif key == ord('s'):
+                    # screenshot
+                    now = datetime.datetime.now()
+                    filename = f"screenshot_{now.strftime('%Y%m%d_%H%M%S')}.png"
+                    cv2.imwrite(filename, overlay)
+                    print(f"Saved screenshot: {filename}")
+                    
         except KeyboardInterrupt:
             # graceful exit
             pass
         finally:
             cap.release()
             cv2.destroyAllWindows()
+
+
 
 
 if __name__ == '__main__':
